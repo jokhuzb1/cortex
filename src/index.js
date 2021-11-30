@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import { Provider } from 'react-redux';
+import store from './redux/configureStore';
 import {
   BrowserRouter as Router,
   Switch,
@@ -12,7 +14,9 @@ import {
 ReactDOM.render(
   <React.Fragment>
     <Router>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </Router>
   </React.Fragment>,
   document.getElementById('root')

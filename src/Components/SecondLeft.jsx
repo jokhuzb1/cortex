@@ -1,5 +1,6 @@
 import { ErrorOutline } from '@material-ui/icons'
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 
@@ -96,6 +97,8 @@ cursor:pointer;
 `
 
 export default function SecondLeft() {
+
+    const { totalAmount, taxYear, taxableAmount, country } = useSelector((state) => state.amount)
     const history = useHistory();
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -107,18 +110,17 @@ export default function SecondLeft() {
 
                 <Label>Select your country of residence *</Label>
                 <Select disabled>
-                    <Option>Australia</Option>
-                    <Option>New Zealand</Option>
+                    <Option>{country}</Option>
+
                 </Select >
                 <Label>Select an income year *</Label>
                 <Select disabled>
-                    <Option disabled selected value=''> -- select an option -- </Option>
-                    <Option>2020-2021</Option>
-                    <Option>2021-2022</Option>
+                    <Option disabled selected value=''> {taxYear} </Option>
+                    {/*  */}
                 </Select>
                 <Label>Enter your total taxable income for the income year *</Label>
                 <InputContainer>
-                    $   <Input disabled type='text' placeholder='Amount' />.00
+                    $   <Input disabled type='text' placeholder={taxableAmount} /> .00
                 </InputContainer>
 
                 <Button onClick={() => history.push('/')}>Go back to previous screen</Button>

@@ -1,10 +1,13 @@
 import { ErrorOutline } from '@material-ui/icons'
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import SecondPage from './SecondPage'
 import { Switch, Route, Link } from 'react-router-dom'
 import { useHistory } from 'react-router'
-
+import calculate from '../calculate'
+import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { increment, setTaxYear, changeTaxableAmount, changeCountry } from '../redux/amountSlice'
 const Rightside = styled.div`
 height:100%;
 flex:1;
@@ -96,9 +99,28 @@ cursor:pointer;
 `
 
 export default function Right() {
+
+
     const history = useHistory();
+    const [taxableAmount, setTaxableAmount] = useState(0);
+    const [country, setCountry] = useState('');
+    const [year, setYear] = useState(0);
+
+
+    const { totalAmount } = useSelector((state) => state.amount)
+    const dispatch = useDispatch();
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        let res = calculate(taxableAmount)
+        dispatch(increment({ totalValue: res }));
+        dispatch(setTaxYear({ year }));
+        dispatch(changeTaxableAmount({ taxableAmount }))
+        dispatch(changeCountry({ country }));
+
+        console.log(totalAmount)
+        console.log(year, country, taxableAmount)
         history.push('/second')
     }
     return (
@@ -108,19 +130,20 @@ export default function Right() {
                 <Info> <ErrorOutline style={{ marginRight: "10px" }} />
                     <InfoText>Fields marked with * are mandatory</InfoText> </Info>
                 <Label>Select your country of residence *</Label>
-                <Select>
-                    <Option value="australia">Australia</Option>
-                    <Option value='nz'>New Zealand</Option>
+                <Select required onChange={(e) => setCountry(e.target.value)}>
+                    <Option selected value=''> -- select your country -- </Option>
+                    <Option value="Australia">Australia</Option>
+                    <Option value='New-Zealand'>New Zealand</Option>
                 </Select>
                 <Label>Select an income year *</Label>
-                <Select required>
-                    <Option disabled selected value=''> -- select an option -- </Option>
+                <Select required onChange={(e) => setYear(e.target.value)}>
+                    <Option selected value=''> -- select an option -- </Option>
                     <Option>2020-2021</Option>
                     <Option>2021-2022</Option>
                 </Select>
                 <Label>Enter your total taxable income for the income year *</Label>
                 <InputContainer>
-                    $   <Input required type='text' placeholder='Amount' />.00
+                    $   <Input required type='text' placeholder='Amount' onChange={(e) => setTaxableAmount(e.target.value)} />.00
                 </InputContainer>
                 <Button  >Calculate</Button>
             </Form>
